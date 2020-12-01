@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
 
             }
@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                     //TODO 로그인이 success 면 화면 전환, 로그인이 fail 이나 error 면 오류처리
                     if(selected_result=="success")
                     {
-                        Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
                         startActivity(intent);
 

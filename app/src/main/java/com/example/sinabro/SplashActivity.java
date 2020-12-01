@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
@@ -15,9 +16,10 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         Handler handler = new Handler(){
-            public void handleMessage(Message msg){
+            @Override
+            public void handleMessage(@NonNull Message msg){
                 super.handleMessage(msg);
-                Intent intent = new Intent(SplashActivity.this, CalendarActivity.class);
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
             }

@@ -19,9 +19,7 @@ import java.util.List;
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.OrientationHelper;
 
-import com.applikeysolutions.cosmocalendar.utils.SelectionType;
 
 public class CalendarActivity extends AppCompatActivity {
     private static final String TAG = "CalendarActivity";

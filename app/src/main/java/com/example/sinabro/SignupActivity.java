@@ -110,7 +110,7 @@ public class SignupActivity extends AppCompatActivity {
                     if(selected_result=="success")
                     {
                         Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SignupActivity.this, CalendarActivity.class);
+                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
                         startActivity(intent);
 
                     }
