@@ -1,6 +1,7 @@
 package com.example.sinabro;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView1,textView2,textView3,textView4;
     private Button button1,button2;
+    public static Button btn_STOP;
 
 
     /*
@@ -41,12 +43,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        task Task = new task();
+        btn_STOP = findViewById(R.id.btn_stop);
+
+
+        /*task Task = new task();
         Task.getData();
         textView1.setText(Task.weatheri_temp);
         textView2.setText(Task.weatheri_rainfall);
         textView3.setText(Task.kor_temp);
-        textView4.setText(Task.kor_rainfall);
+        textView4.setText(Task.kor_rainfall);*/
 
         textView1 = (TextView) findViewById(R.id.weatheri_temp); //웨더아이 기온
         textView2 = (TextView) findViewById(R.id.weatheri_rainfall); //웨더아이 강수확률
@@ -69,14 +74,14 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class); // 여기 캘린더액티비티로 바꿔주세용~!
+                Intent intent = new Intent(MainActivity.this, CalendarActivity.class); // 여기 캘린더액티비티로 바꿔주세용~!
                 startActivity(intent);
             }
         });
 
     }
 
-    public class task {
+    /*public class task {
 
         String[] data = new String[5];
 
@@ -158,6 +163,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-    }
+    }*/
 }
 

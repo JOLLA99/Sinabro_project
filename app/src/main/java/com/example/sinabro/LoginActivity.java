@@ -20,7 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
-    final String url = "https://webhook.site/b2f72fe2-41ca-429a-a2e6-bdc3fd0d4c05";
+    final String url = "http://34.64.77.135:3000/login/";
     private EditText Pw_Login, Id_Login;
     private Button Btn_Signup,Btn_Login;
 
