@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,25 +24,39 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView1, textView2, textView3, textView4;
+    private TextView textView1, textView2, textView3, textView4, textView5, textView6;
     private Button button1, button2, button3;
     Intent passedIntent;
     String pointData;
     public static int point;
+    private ImageView imageView;
+    ArrayList<String> data_pick;
+
 
     final String url = "http://34.64.77.135:3000/tree/"; //서버 주소
+    final String url_w = "http://34.64.77.135:3000/weather/"; //날짜 서버 주소
+
+    //int rain=0; //강수확률 저장할
+    int weatherData = 0; // 날씨 판별 데이터 저장
+
+    SavedUser savedUser = new SavedUser();
+    String UserID = savedUser.getID();
 
 
-    /*
-    String date=null;
-    String weatheri_temp=null;
-    String weatheri_rainfall=null;
-    String kor_temp=null;
-    String kor_rainfall=null; */
+    String date;
+    String weatheri_temp;
+    String weatheri_rainfall;
+    String kor_temp;
+    String kor_rainfall;
+    String todoText;
+    String todoDate;
+
+
 
 
     @Override
@@ -55,6 +70,32 @@ public class MainActivity extends AppCompatActivity {
 
         passedIntent = getIntent();
         processCommand(passedIntent);
+
+        getData(url, UserID);
+
+
+
+
+        //날씨 판별 데이터에 따라 이미지 바꿔 출력
+        if (weatherData == 3) //비올때
+            imageView.setImageResource(R.drawable.rainy1);
+        else if (weatherData == 2) // 흐릴 때(올수도 있고 안올수도 있고)
+            imageView.setImageResource(R.drawable.cloudy1);
+        else if (weatherData == 1) //맑을 때
+            imageView.setImageResource(R.drawable.sunny1);
+
+        textView1 = findViewById(R.id.weatheri_temp); //웨더아이 기온
+        textView2 = findViewById(R.id.weatheri_rainfall); //웨더아이 강수확률
+        textView3 = findViewById(R.id.kor_temp); //기상청 기온
+        textView4 = findViewById(R.id.kor_rainfall); //기상청 강수량
+        textView5 = findViewById(R.id.todoText); // 일정 미리보기 텍스트
+        textView6 = findViewById(R.id.todoDate); // 일정 날짜 텍스트
+
+        button1 = findViewById(R.id.logout_button); // 로그아웃 버튼
+        button2 = findViewById(R.id.calendar_button); //캘린터 버튼
+        button3 = findViewById(R.id.btn_tree);
+        imageView = findViewById(R.id.weather_img1);
+
 
 
         if (AlarmService.flag) {
@@ -81,22 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
-
-        /*task Task = new task();
-        Task.getData();
-        textView1.setText(Task.weatheri_temp);
-        textView2.setText(Task.weatheri_rainfall);
-        textView3.setText(Task.kor_temp);
-        textView4.setText(Task.kor_rainfall);*/
-
-        textView1 = (TextView) findViewById(R.id.weatheri_temp); //웨더아이 기온
-        textView2 = (TextView) findViewById(R.id.weatheri_rainfall); //웨더아이 강수확률
-        textView3 = (TextView) findViewById(R.id.kor_temp); //기상청 기온
-        textView4 = (TextView) findViewById(R.id.kor_rainfall); //기상청 강수량
-        button1 = (Button) findViewById(R.id.logout_button); // 로그아웃 버튼
-        button2 = (Button) findViewById(R.id.calendar_button); //캘린터 버튼
-        button3 = (Button) findViewById(R.id.btn_tree);
 
 
         //로그아웃 버튼 누르면 로그인 화면으로 이동
@@ -127,6 +152,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    public int getWeather(int rain) {
+        //강수확률에 따라 3단계로 구분
+        if (rain >= 60) // 강수확률 60퍼 이상일때
+            weatherData = 3;
+            //imageView.setImageResource(R.drawable.rainy1);
+        else if (rain >= 40 && rain < 60) // 40~59
+            weatherData = 2;
+            //imageView.setImageResource(R.drawable.cloudy1);
+        else // 40 미만
+            weatherData = 1;
+        //imageView.setImageResource(R.drawable.sunny1);
+        return weatherData; // 판별 데이터 넘김
+    }
+
 
     //나무 테이블 값 보냄
     //서버로부터 포인트 받는함수
@@ -234,88 +274,117 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*public class task {
+    public void getData(final String urls, final String id) {
+        ArrayList<String> data = new ArrayList<>();
 
-        String[] data = new String[5];
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL(urls);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST"); //전송방식
+                    connection.setDoOutput(true);       //데이터를 쓸 지 설정
+                    connection.setDoInput(true);        //데이터를 읽어올지 설정
 
-        String date = data[0];
-        String weatheri_rainfall = data[1];
-        String weatheri_temp = data[2];
-        String kor_rainfall = data[3];
-        String kor_temp = data[4];
+                    OutputStream os = connection.getOutputStream();
+                    JSONObject sendData = new JSONObject();
+                    //샘플데이터
+                    sendData.put("id", id);
 
+                    Log.d("제이슨 오브젝트", sendData.toString());
+                    String body = sendData.toString();
+                    // Request Body에 Data 셋팅.
+                    os.write(body.getBytes("utf-8"));
+                    // Request Body에 Data 입력.
+                    os.flush();
+                    // OutputStream 종료.
+                    os.close();
 
-        public String[] getData() {
+                    InputStream is = connection.getInputStream();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                    String result;
+                    while ((result = br.readLine()) != null) {
+                        sb.append(result + "\n");
+                    }
+                    connection.disconnect();
+                    result = sb.toString();
 
-            //String[] data = new String[5];
-
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
-
-                        //getData("http://34.64.77.135:3000/weather/");
-                        URL url = new URL("http://34.64.77.135:3000/weather/");
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        connection.setRequestMethod("POST"); //전송방식
-                        connection.setDoOutput(true);       //데이터를 쓸 지 설정
-                        connection.setDoInput(true);        //데이터를 읽어올지 설정
-
-                        OutputStream os = connection.getOutputStream();
-                        JSONObject sendData = new JSONObject();
-                        //샘플데이터
-                        sendData.put("date", "12월01일 14:51 갱신");
-                        sendData.put("naverPrecipitation", "30");
-                        sendData.put("naverTemp", "1");
-                        sendData.put("govPrecipitation", "20");
-                        sendData.put("govTemp", "2.5");
-
-                        Log.d("제이슨 오브젝트", sendData.toString());
-                        String body = sendData.toString();
-                        // Request Body에 Data 셋팅.
-                        os.write(body.getBytes("utf-8"));
-
-                        // Request Body에 Data 입력.
-                        os.flush();
-
-                        // OutputStream 종료.
-                        os.close();
-
-                        InputStream is = connection.getInputStream();
-                        StringBuilder sb = new StringBuilder();
-                        BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                        String result;
-                        while ((result = br.readLine()) != null) {
-                            sb.append(result + "\n");
-                        }
-
-                        connection.disconnect();
-
-                        result = sb.toString();
+                    Log.d("리절트", result);
+                    JSONObject obj = new JSONObject(result);
+                    Log.d("받아온 리절트", obj.getString("result"));
 
 
-                        Log.d("리절트", result);
-                        JSONObject obj = new JSONObject(result);
-                        Log.d("받아온 리절트", obj.getString("result"));
+                    data.add(obj.getString("date").toString());
+                    data.add(obj.getString("naverPrecipitation").toString());
+                    // double test = Double.parseDouble(data[1]);
+                    //double_data[0] = test;
+                    //System.out.println("웨더아이 강수확률 double로 형변환 :"+ test);
+                    data.add(obj.getString("naverTemp").toString());
+                    data.add(obj.getString("govPrecipitation").toString());
+                    data.add(obj.getString("govTemp").toString());
 
-                        data[0] = obj.getString("date");
-                        data[1] = obj.getString("naverPrecipitation");
-                        data[2] = obj.getString("naverTemp");
-                        data[3] = obj.getString("govPrecipitation");
-                        data[4] = obj.getString("govTemp");
 
-
-                    } catch (Exception e) {
-
+                    int a = data.size();
+                    for (int index = 0; index < a; index++) {
+                        System.out.println(data.get(index));
                     }
 
+                    data_pick = new ArrayList<>();
+
+                    data_pick.addAll(data);
+
+
+                    int b = data_pick.size();
+                    for (int index = 0; index < a; index++) {
+                        System.out.println(data_pick.get(index));
+                    }
+
+                    date =data_pick.get(0).toString();
+                    weatheri_rainfall = data_pick.get(1).toString();
+                    weatheri_temp = data_pick.get(2).toString();
+                    kor_rainfall = data_pick.get(3).toString();
+                    kor_temp = data_pick.get(4).toString();
+
+                    System.out.println(weatheri_temp);
+
+
+                    //강수확률에 따라 흐림/비옴/맑음 판별
+                    int rain = Integer.parseInt(weatheri_rainfall);
+                    weatherData = getWeather(rain);
+
+                    //받아온 날짜 화면에 표시
+                    textView1.setText(weatheri_temp+"℃");
+                    System.out.println(weatheri_temp);
+                    textView2.setText(weatheri_rainfall+" %");
+                    System.out.println(weatheri_rainfall);
+                    textView3.setText(kor_temp+"℃");
+                    System.out.println(kor_temp);
+                    textView4.setText(kor_rainfall+" mm");
+                    System.out.println(kor_rainfall);
+
+                    CalendarDetailActivity detailActivity = new CalendarDetailActivity();
+
+                    //받아온 일정 화면에 표시
+                    textView5.setText(detailActivity.scheduleName);
+                    System.out.println(detailActivity.scheduleName);
+                    //System.out.println(todoText);
+                    textView6.setText(detailActivity.scheduleName);
+                    System.out.println(detailActivity.scheduleDate);
+
+
+
+                } catch (Exception e) {
                 }
-            }.start();
 
-            return data;
-        }
+            }
+        }.start();
 
 
-    }*/
+    }
+
+
+
 
 }

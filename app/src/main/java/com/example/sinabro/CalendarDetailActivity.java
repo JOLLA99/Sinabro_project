@@ -30,6 +30,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class CalendarDetailActivity extends AppCompatActivity {
+    public String scheduleDate,scheduleName;
+
     final String url = "http://34.64.77.135:3000/calendar/";
     private static final String TAG="CalendarDetailActivity";
     private EditText name, content;
