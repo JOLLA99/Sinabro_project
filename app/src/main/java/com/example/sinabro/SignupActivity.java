@@ -107,21 +107,45 @@ public class SignupActivity extends AppCompatActivity {
                     String selected_result = obj.getString("result");
 
                     //TODO 로그인이 success 면 화면 전환, 로그인이 fail 이나 error 면 오류처리
-                    if(selected_result=="success")
+                    if(selected_result.equals("success"))
                     {
-                        Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                        startActivity(intent);
+
+                        SignupActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+
+                                Toast.makeText(getApplicationContext(), "회원가입 성공", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                            }
+                        });
 
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                        return;
+                        SignupActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+
+                                Toast.makeText(getApplicationContext(), "회원가입 실패", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+
 
                     }
 
                 }catch (Exception e){
+                    SignupActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //String name = obj.getString("name");
 
+                            Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
                 }
 
             }

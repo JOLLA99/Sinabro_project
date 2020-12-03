@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -23,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     final String url = "http://34.64.77.135:3000/login/";
     private EditText Pw_Login, Id_Login;
     private Button Btn_Signup,Btn_Login;
+
 
 
     @Override
@@ -49,12 +51,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String userID = Id_Login.getText().toString();
+                SavedUser savedUser = new SavedUser();
+                savedUser.setUserID(userID);
+
                 String userPw = Pw_Login.getText().toString();
 
                 login(url, userID, userPw);
 
             }
-            });
+        });
 
     }
 
@@ -72,6 +77,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     OutputStream os = connection.getOutputStream();
                     JSONObject sendData = new JSONObject();
+                    //sendData.put("id","1234");
+                    //sendData.put("passwd","5678");
                     sendData.put("id", id);
                     sendData.put("passwd", pw);
                     Log.d("제이슨 오브젝트",sendData.toString());
@@ -102,23 +109,49 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject(result);
                     Log.d("받아온 리절트",obj.getString("result"));
                     String selected_result = obj.getString("result");
+                    String name = obj.getString("name");
 
                     //TODO 로그인이 success 면 화면 전환, 로그인이 fail 이나 error 면 오류처리
-                    if(selected_result=="success")
+                    if(selected_result.equals("success"))
                     {
-                        Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
-                        startActivity(intent);
+                        LoginActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("로그인","성공");
+
+
+                                SavedUser savedUser = new SavedUser();
+                                savedUser.setName(name);
+
+
+                                Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+
 
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                        return;
+                        LoginActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
 
                     }
 
                 }catch (Exception e){
+                    LoginActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
 
+                        }
+                    });
                 }
 
             }
@@ -127,3 +160,4 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 }
+

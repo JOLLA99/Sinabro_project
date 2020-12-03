@@ -98,9 +98,15 @@ public class CalendarDetailActivity extends AppCompatActivity {
                     String date_final = date+" "+cal_date;
                     OutputStream os = connection.getOutputStream();
                     JSONObject sendData = new JSONObject();
-                    sendData.put("scheduleDate", date_final);
-                    sendData.put("scheduleName", cal_name);
-                    sendData.put("scheduleContents", cal_content);
+
+                    SavedUser savedUser = new SavedUser();
+                    String id = savedUser.getID();
+
+                    sendData.put("id", id); //아이디
+                    sendData.put("scheduleDate", date_final); //일정날짜
+                    sendData.put("scheduleMask", "true"); //마스크유무
+                    sendData.put("scheduleName", cal_name); //일정이름
+                    sendData.put("scheduleContents", cal_content); //일정내용
                     Log.d("제이슨 오브젝트",sendData.toString());
                     String body = sendData.toString();
                     // Request Body에 Data 셋팅.
@@ -131,21 +137,37 @@ public class CalendarDetailActivity extends AppCompatActivity {
                     String selected_result = obj.getString("result");
 
                     //TODO 로그인이 success 면 화면 전환, 로그인이 fail 이나 error 면 오류처리
-                    if(selected_result=="success")
+                    if(selected_result.equals("success"))
                     {
-                        Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(CalendarDetailActivity.this, LoginActivity.class);
-                        startActivity(intent);
+                        CalendarDetailActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(CalendarDetailActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                            }
+                        });
 
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                        return;
+                        CalendarDetailActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
 
                     }
 
                 }catch (Exception e){
+                    CalendarDetailActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
 
+                        }
+                    });
                 }
 
             }

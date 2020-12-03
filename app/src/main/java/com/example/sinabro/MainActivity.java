@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -26,8 +27,8 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView1,textView2,textView3,textView4;
-    private Button button1,button2;
-    public static Button btn_STOP;
+    private Button button1,button2, button3;
+
 
 
     /*
@@ -44,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
         // 건들이지 말자!!!!!
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        btn_STOP = findViewById(R.id.btn_stop);
+
 
         if(AlarmService.flag)
         {
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         textView4 = (TextView) findViewById(R.id.kor_rainfall); //기상청 강수량
         button1 = (Button) findViewById(R.id.logout_button); // 로그아웃 버튼
         button2 = (Button) findViewById(R.id.calendar_button); //캘린터 버튼
+        button3 = (Button)findViewById(R.id.btn_tree);
 
 
         //로그아웃 버튼 누르면 로그인 화면으로 이동
@@ -100,6 +104,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CalendarActivity.class); // 여기 캘린더액티비티로 바꿔주세용~!
+                startActivity(intent);
+            }
+        });
+
+        // 트리 버튼 누르면 트리 화면으로 이동
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GrowthActivity.class); // 여기 캘린더액티비티로 바꿔주세용~!
                 startActivity(intent);
             }
         });
