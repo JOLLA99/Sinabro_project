@@ -34,7 +34,7 @@ public class CalendarActivity extends AppCompatActivity {
         cal_view.setOnDateChangeListener(new CalendarView.OnDateChangeListener(){
             @Override
             public void onSelectedDayChange(CalendarView calendarView, int i, int i1, int i2){
-                String date = i + "/" + i1 + "/" + i2;
+                String date = i + "/" + (i1+1) + "/" + i2;
                 Log.d(TAG, "날짜 : "+ date);
 
                 Intent intent = new Intent(CalendarActivity.this, CalendarDetailActivity.class);

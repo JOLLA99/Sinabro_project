@@ -1,7 +1,9 @@
 package com.example.sinabro;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +46,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btn_STOP = findViewById(R.id.btn_stop);
+
+        if(AlarmService.flag)
+        {
+            AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+            alert_confirm.setMessage("시나브로가 알려드린 날씨와 함께 재미있게 즐기셨나요?").setCancelable(false).setPositiveButton("잘 맞았어요",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 'YES'
+                        }
+                    }).setNegativeButton("맞지 않았어요",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 'No'
+                            return;
+                        }
+                    });
+            AlertDialog alert = alert_confirm.create();
+            alert.show();
+
+        }
+
 
 
         /*task Task = new task();

@@ -2,6 +2,8 @@ package com.example.sinabro;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -32,10 +34,11 @@ public class CalendarDetailActivity extends AppCompatActivity {
     private static final String TAG="CalendarDetailActivity";
     private EditText name, content;
     public String selected_date;
+    public String date;
 
     private AlarmManager alarmManager;
     private TimePicker timePicker;
-    private Button btn;
+    private Button btn, btn1;
     private PendingIntent pendingIntent;
 
     @Override
@@ -43,12 +46,21 @@ public class CalendarDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_detail);
 
+        Calendar c = Calendar.getInstance();
+
+
+        Intent in = getIntent();
+        date= in.getStringExtra("date");
+        Log.d("date받음", date);
+
         this.alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         this.timePicker = findViewById(R.id.timePicker);
 
         findViewById(R.id.btnStart).setOnClickListener(mClickListener);
 
         btn = (Button)findViewById(R.id.btnGoCal);
+
+
         btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -61,18 +73,13 @@ public class CalendarDetailActivity extends AppCompatActivity {
         });
 
 
-        MainActivity.btn_STOP.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Log.d("??", "ff");
-                // 알람 중지
-                stop();
+    }
 
-            }
-
-
-
-        });
+    public void mOnPopupClick(View v){
+        //데이터 담아서 팝업(액티비티) 호출
+        Intent intent = new Intent(this, PopupActivity.class);
+        intent.putExtra("data", "Test Popup");
+        startActivity(intent);
     }
 
     //json 통신
@@ -88,9 +95,10 @@ public class CalendarDetailActivity extends AppCompatActivity {
                     connection.setDoOutput(true);       //데이터를 쓸 지 설정
                     connection.setDoInput(true);        //데이터를 읽어올지 설정
 
+                    String date_final = date+" "+cal_date;
                     OutputStream os = connection.getOutputStream();
                     JSONObject sendData = new JSONObject();
-                    sendData.put("scheduleDate", cal_date);
+                    sendData.put("scheduleDate", date_final);
                     sendData.put("scheduleName", cal_name);
                     sendData.put("scheduleContents", cal_content);
                     Log.d("제이슨 오브젝트",sendData.toString());
@@ -180,11 +188,18 @@ public class CalendarDetailActivity extends AppCompatActivity {
         this.alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
         // Toast 보여주기 (알람 시간 표시)
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         Toast.makeText(this, "Alarm : " + format.format(calendar.getTime()), Toast.LENGTH_SHORT).show();
-        selected_date = format.format(calendar.getTime()).toString();
 
+        selected_date = format.format(calendar.getTime()).toString();
+        Log.d("dsad", selected_date);
         calendar_send(url, selected_date, name1, content1);
+
+        Log.d("??", "dd");
+        Intent intent1 = new Intent(CalendarDetailActivity.this, MainActivity.class);
+        startActivity(intent1);
+
+
     }
 
     /* 알람 중지 */

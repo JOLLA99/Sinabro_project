@@ -1,16 +1,22 @@
 package com.example.sinabro;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -20,6 +26,11 @@ public class AlarmService extends Service {
 
     private MediaPlayer mediaPlayer;
     private boolean isRunning;
+    public static boolean flag =false;
+
+
+
+
 
     @Nullable
     @Override
@@ -53,6 +64,10 @@ public class AlarmService extends Service {
             this.isRunning = true;
 
             Log.d("AlarmService", "Alarm Start");
+
+            flag=true;
+
+
         } else if (this.isRunning & state.equals("off")) {
             // 알람음 재생 ON, 알람음 중지 상태
             this.mediaPlayer.stop();
@@ -84,4 +99,9 @@ public class AlarmService extends Service {
 
         return channelId;
     }
+
+
+
+
+
 }
