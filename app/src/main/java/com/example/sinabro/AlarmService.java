@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,11 +27,7 @@ public class AlarmService extends Service {
 
     private MediaPlayer mediaPlayer;
     private boolean isRunning;
-    public static boolean flag =false;
-
-
-
-
+    public static boolean flag;
 
     @Nullable
     @Override
@@ -66,6 +63,36 @@ public class AlarmService extends Service {
             Log.d("AlarmService", "Alarm Start");
 
             flag=true;
+
+            Bundle bun = new Bundle();
+
+            String text="dsa";
+
+            bun.putString("notiMessage", text);
+
+
+
+            Intent popupIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+
+
+            popupIntent.putExtras(bun);
+
+            PendingIntent pie= PendingIntent.getActivity(getApplicationContext(), 0, popupIntent, PendingIntent.FLAG_ONE_SHOT);
+
+            try {
+
+                pie.send();
+
+            } catch (PendingIntent.CanceledException e) {
+
+
+
+            }
+
+
+
+
 
 
         } else if (this.isRunning & state.equals("off")) {

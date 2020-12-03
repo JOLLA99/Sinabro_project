@@ -1,7 +1,7 @@
 package com.example.sinabro;
 
 public class SavedUser {
-    public static String userID;
+    public static String userID="1234";
     public static String name;
 
     public String getID(){

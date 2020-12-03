@@ -41,6 +41,8 @@ public class CalendarDetailActivity extends AppCompatActivity {
     private Button btn, btn1;
     private PendingIntent pendingIntent;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,12 +77,6 @@ public class CalendarDetailActivity extends AppCompatActivity {
 
     }
 
-    public void mOnPopupClick(View v){
-        //데이터 담아서 팝업(액티비티) 호출
-        Intent intent = new Intent(this, PopupActivity.class);
-        intent.putExtra("data", "Test Popup");
-        startActivity(intent);
-    }
 
     //json 통신
     public void calendar_send(final String urls, final String cal_date, final String cal_name, final String cal_content){
@@ -143,7 +139,7 @@ public class CalendarDetailActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(CalendarDetailActivity.this, LoginActivity.class);
+                                Intent intent = new Intent(CalendarDetailActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
                         });
